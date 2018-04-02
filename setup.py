@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='pinmyreqs',
-    version='0.2',
+    version='0.3',
     description='Pin your requirements.txt without adding new dependencies',
     long_description=open('README.rst').read(),
     url='http://github.com/mdamien/pinmyreqs',
