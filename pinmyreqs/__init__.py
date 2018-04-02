@@ -24,7 +24,7 @@ def pinmyreqs():
                     freezed[pkg.lower()] = version
                     parsed = True
             if not parsed:
-                print('[warning] ignored pip-freeze line:', line, file=sys.stderr)
+                print('[warning] ignored pip-freeze line:', '`' + line + '`', file=sys.stderr)
 
     for line in open(sys.argv[1]):
         line = line.strip()
@@ -34,9 +34,11 @@ def pinmyreqs():
             pkg = m.group(1)
             if pkg.lower() in freezed:
                 print('%s==%s' % (pkg, freezed[pkg.lower()]))
-                parsed = True
-        if not parsed:
-            print('[warning] ignored requirements.txt line:', line, file=sys.stderr)
+            else:
+                print('[warning] ignored requirements.txt line:', '`' + line + '`', '(not in pip-freeze)', file=sys.stderr)
+                print(line)
+        else:
+            print('[warning] ignored requirements.txt line:', '`' + line + '`', '(not formatted as "pkg==version")', file=sys.stderr)
             print(line)
 
 
