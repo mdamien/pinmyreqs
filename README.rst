@@ -14,3 +14,11 @@ To use, :code:`pip freeze | pinmyreqs requirements.txt`
 
 There's also an utility to unpin your deps so you can upgrade all of them:
 :code:`unpinmyreqs requirements.txt`
+
+Alternatives:
+
+ - https://pypi.python.org/pypi/pypinner/
+ - https://pypi.python.org/pypi/bumper/
+ - https://pypi.python.org/pypi/peepin/
+ - https://pypi.python.org/pypi/pip-lock/
+ - https://pypi.python.org/pypi/pur/

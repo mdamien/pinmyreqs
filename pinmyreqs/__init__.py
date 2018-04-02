@@ -1,6 +1,7 @@
 import sys
 import re
 
+# TODO use rparse
 
 RE_PKG = r'([\w\d\-\_\.]+)(?:==([\w\d\.]+))?'
 
