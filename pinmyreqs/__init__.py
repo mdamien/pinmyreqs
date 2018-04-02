@@ -1,40 +1,54 @@
-import sys, re
+import sys
+import re
 
-# TODO: cmd line help / click
-# asciinema
+
+RE_PKG = r'([\w\d\-\_\.]+)(?:==([\w\d\.]+))?'
+
 
 def pinmyreqs():
-	# pip freeze | pinmyreqs requirements.txt
-	# TODO: pin the unpinned
-	freezed = {}
-	for line in sys.stdin:
-		line = line.strip()
-		if line and not line.startswith('-e '):
-			m = re.match('([\w\d\-\_\.]+)==([\w\d\.]+)', line)
-			if m:
-				pkg, version = m.groups()
-				freezed[pkg] = version
-			else:
-				print('Invalid line:', line, file=sys.stderr)
+    if len(sys.argv) != 2 or sys.stdin.isatty():
+        print('usage: pip freeze | pinmyreqs requirements.txt', file=sys.stderr)
+        return -1
 
-	for line in open(sys.argv[1]):
-		line = line.strip()
-		m = re.match('([\w\d\-\_\.]+)==([\w\d\.]+)', line)
-		if m:
-			pkg, version = m.group(1), m.group(2)
-			if pkg in freezed:
-				print('%s==%s' % (pkg, freezed[pkg]))
-			else:
-				print(line)
-		else:
-			print(line)
+    # TODO: pin the unpinned
+    # TODO -e git+git@github.com:XXXX
+    freezed = {}
+    for line in sys.stdin:
+        line = line.strip()
+        parsed = False
+        if line:
+            m = re.match(RE_PKG, line)
+            if m:
+                pkg, version = m.groups()
+                if version:
+                    freezed[pkg.lower()] = version
+                    parsed = True
+            if not parsed:
+                print('[warning] ignored pip-freeze line:', line, file=sys.stderr)
+
+    for line in open(sys.argv[1]):
+        line = line.strip()
+        m = re.match(RE_PKG, line)
+        parsed = False
+        if m:
+            pkg = m.group(1)
+            if pkg.lower() in freezed:
+                print('%s==%s' % (pkg, freezed[pkg.lower()]))
+                parsed = True
+        if not parsed:
+            print('[warning] ignored requirements.txt line:', line, file=sys.stderr)
+            print(line)
 
 
 def unpinmyreqs():
-	for line in open(sys.argv[1]):
-		line = line.strip()
-		m = re.match('([\w\d\-\_\.]+)==([\w\d\.]+)', line)
-		if m:
-			print(m.group(1))
-		else:
-			print(line)
+    if len(sys.argv) != 2 or not sys.stdin.isatty():
+        print('usage: unpinmyreqs requirements.txt', file=sys.stderr)
+        return -1
+
+    for line in open(sys.argv[1]):
+        line = line.strip()
+        m = re.match(RE_PKG, line)
+        if m:
+            print(m.group(1))
+        else:
+            print(line)
